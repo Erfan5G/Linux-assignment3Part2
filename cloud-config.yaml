@@ -1,0 +1,24 @@
+#cloud-config
+users:
+  - name: web
+    primary_group: web
+    groups: sudo
+    shell: /bin/bash
+    sudo: ['ALL=(ALL) NOPASSWD:ALL']
+    ssh-authorized-keys:
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIPaNlSYZabA1iV9X9/bc5bxfm/UIJ1w4K7UADmWXbRUn erfanngoudarzi@gmail.com 
+
+packages:
+  - ripgrep
+  - rsync
+  - nginx
+  - ufw
+
+runcmd:
+  - sed -i 's/^#\(Storage=auto\)/\1/' /etc/systemd/journald.conf
+  - sed -i -e '/^PermitRootLogin/s/^.*$/PermitRootLogin no/' /etc/ssh/sshd_config
+  - systemctl restart ssh
+  - systemctl restart systemd-journald
+  - ufw allow 'Nginx Full'
+  - ufw allow OpenSSH
+  - ufw enable
